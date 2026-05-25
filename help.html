@@ -643,12 +643,12 @@
     <h4>量比徽章 — 今日成交量是否異常</h4>
     <p>量比 = 今日同時段成交量 ÷ 近2日同時段平均成交量，反映今日相對熱度：</p>
     <div class="signal-row">
-      <span class="sig rise"><span class="vol-chip vol-super">5x ⚡</span></span>
-      <span class="sig-desc">量比 ≥ 5 倍，今日同時段成交量是近2日的5倍以上，<strong>極度爆量</strong>，整列閃紅框</span>
+      <span class="sig rise"><span class="vol-chip vol-super">2x ⚡</span></span>
+      <span class="sig-desc">量比 ≥ 2 倍，今日同時段成交量是近2日的2倍以上，<strong>爆量警戒</strong>，整列閃紅框</span>
     </div>
     <div class="signal-row">
-      <span class="sig warn"><span class="vol-chip vol-alert">3x △</span></span>
-      <span class="sig-desc">量比 ≥ 3 倍，成交量明顯異常放大，整列閃金框，值得關注</span>
+      <span class="sig warn"><span class="vol-chip vol-alert">1.5x △</span></span>
+      <span class="sig-desc">量比 ≥ 1.5 倍，成交量明顯高於平常，整列閃金框，值得關注</span>
     </div>
     <p style="font-size:15px; color:var(--dim); margin-top:8px">量比爆量不代表一定會漲，只代表「今天比平常熱很多」，原因可能是利多、法說、主力介入或散戶追高，需搭配大單方向（D區）判斷。</p>
   </div>
@@ -713,7 +713,11 @@
       <div class="color-item"><div class="color-swatch" style="background:#cd7f32; border-radius:50%"></div><div><div style="color:#cd7f32; font-weight:700">銅色圓點</div><span>排行第 3 名</span></div></div>
       <div class="color-item"><div class="color-swatch" style="background:#7b8cde"></div><div><div style="color:#7b8cde; font-weight:700">藍紫色</div><span>標題 / 中性資訊</span></div></div>
       <div class="color-item"><div class="color-swatch" style="background:#F0B840"></div><div><div style="color:#F0B840; font-weight:700">橘黃色</div><span>拉鋸狀態 / 異常量比</span></div></div>
-      <div class="color-item"><div class="color-swatch" style="background:#ff3f5e; animation:gSup 1s infinite"></div><div><div style="color:#ff3f5e; font-weight:700">閃紅框</div><span>F 區量比爆量（≥5x）</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#ff3f5e; animation:gSup 1s infinite"></div><div><div style="color:#ff3f5e; font-weight:700">閃紅框</div><span>F 區量比爆量（≥2x）</span></div></div>
+      <div class="color-item"><div style="font-size:18px;font-weight:700;color:#ff3f5e;text-shadow:0 0 8px #ff3f5e;line-height:1;flex-shrink:0">ϟ</div><div><div style="color:#ff3f5e; font-weight:700">ϟ 急拉</div><span>B 區 60秒內急速上漲 &gt;1.5%</span></div></div>
+      <div class="color-item"><div style="font-size:18px;font-weight:700;color:#00e5a0;text-shadow:0 0 8px #00e5a0;line-height:1;flex-shrink:0">ϟ</div><div><div style="color:#00e5a0; font-weight:700">ϟ 急跌</div><span>B 區 60秒內急速下跌 &gt;1.5%</span></div></div>
+      <div class="color-item"><div style="width:12px;height:12px;border-radius:50%;background:#ff3f5e;box-shadow:0 0 6px #ff3f5e;flex-shrink:0;margin-top:2px"></div><div><div style="color:#ff3f5e; font-weight:700">掃貨圓點</div><span>D 區 主力單邊買進</span></div></div>
+      <div class="color-item"><div style="width:12px;height:12px;border-radius:50%;background:#00e5a0;box-shadow:0 0 6px #00e5a0;flex-shrink:0;margin-top:2px"></div><div><div style="color:#00e5a0; font-weight:700">出貨圓點</div><span>D 區 主力單邊賣出</span></div></div>
     </div>
   </div>
   <div class="card">
