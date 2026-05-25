@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金流黑盒子 — 儀表板說明書</title>
+<style>
+  :root {
+    --bg:        #0a0a0f;
+    --bg2:       #111118;
+    --bg3:       #18181f;
+    --border:    #2a2a38;
+    --accent:    #7b8cde;
+    --rise:      #ff3f5e;
+    --fall:      #00e5a0;
+    --gold:      #f5c842;
+    --silver:    #b0b8c8;
+    --copper:    #cd7f32;
+    --dim:       #666880;
+    --text:      #d8daf0;
+    --surge-up:  #ff3f5e;
+    --surge-dn:  #00e5a0;
+    --dot-acc:   #ff3f5e;
+    --dot-tug:   #F0B840;
+    --dot-dist:  #00e5a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+    padding: 0 0 80px;
+  }
+
+  /* ── 頂部 Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0d0d1a 0%, #12121f 60%, #0a0a15 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 40px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(123,140,222,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-logo {
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--dim);
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  /* ── 導覽列 ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 16px;
+    flex-wrap: wrap;
+  }
+  nav a {
+    display: inline-block;
+    padding: 10px 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffb830;
+    text-decoration: none;
+    letter-spacing: .5px;
+    transition: color .2s;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover { color: #fff; }
+  nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── 主體容器 ── */
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── 快速說明列 ── */
+  .quick-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 32px 0;
+  }
+  .quick-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .quick-card .badge {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: rgba(123,140,222,.12);
+    border: 1px solid rgba(123,140,222,.3);
+    border-radius: 4px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .quick-card p {
+    font-size: 15px;
+    color: var(--dim);
+    line-height: 1.5;
+  }
+  .quick-card strong { color: var(--text); }
+
+  /* ── 區塊標題 ── */
+  .section { margin: 48px 0 0; }
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-id {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--accent);
+    min-width: 32px;
+    letter-spacing: 1px;
+  }
+  .sec-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .sec-where {
+    margin-left: auto;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffb830;
+    letter-spacing: .5px;
+    background: rgba(255,184,48,.08);
+    border: 1px solid rgba(255,184,48,.35);
+    border-radius: 4px;
+    padding: 3px 9px;
+    white-space: nowrap;
+  }
+
+  /* ── 說明卡片 ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .card p { font-size: 16px; color: var(--text); margin-bottom: 6px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* ── 信號表格 ── */
+  .signal-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: 16px;
+  }
+  .signal-row:last-child { border-bottom: none; }
+  .sig { font-weight: 700; min-width: 80px; }
+  .sig.rise { color: var(--rise); }
+  .sig.fall { color: var(--fall); }
+  .sig.gold { color: var(--gold); }
+  .sig.silver { color: var(--silver); }
+  .sig.copper { color: var(--copper); }
+  .sig.accent { color: var(--accent); }
+  .sig.warn { color: var(--dot-tug); }
+  .sig.red-dot { color: var(--dot-acc); }
+  .sig.green-dot { color: var(--dot-dist); }
+  .sig-desc { color: var(--dim); flex: 1; }
+  .sig-action { font-size: 14.5px; color: var(--text); background: rgba(255,255,255,.04); border-radius: 4px; padding: 2px 8px; }
+
+  /* ── ϟ 閃符號示範 ── */
+  .surge-demo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 14px;
+    margin: 4px 4px 4px 0;
+  }
+  .surge-up { color: var(--surge-up); font-weight: 700; font-size: 18px; animation: sUp .8s infinite; }
+  .surge-dn { color: var(--surge-dn); font-weight: 700; font-size: 18px; animation: sDn .8s infinite; }
+  @keyframes sUp { 0%,100%{opacity:1;text-shadow:0 0 4px #ff3f5e,0 0 10px #ff3f5e} 50%{opacity:.5;text-shadow:none} }
+  @keyframes sDn { 0%,100%{opacity:1;text-shadow:0 0 4px #00e5a0,0 0 10px #00e5a0} 50%{opacity:.5;text-shadow:none} }
+
+  /* ── 圓點示範 ── */
+  .dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .dot-acc  { background: var(--dot-acc);  box-shadow: 0 0 6px var(--dot-acc); }
+  .dot-tug  { background: var(--dot-tug);  box-shadow: 0 0 6px var(--dot-tug); }
+  .dot-dist { background: var(--dot-dist); box-shadow: 0 0 6px var(--dot-dist); }
+
+  /* ── MACD 示範 ── */
+  .macd-chip {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 2px 10px;
+    margin: 2px;
+  }
+  .macd-bull  { background: rgba(255,63,94,.15);  color: #ff3f5e; border: 1px solid rgba(255,63,94,.4); }
+  .macd-bear  { background: rgba(0,229,160,.1);   color: #00e5a0; border: 1px solid rgba(0,229,160,.3); }
+  .macd-pdiv  { background: rgba(245,200,66,.1);  color: #f5c842; border: 1px solid rgba(245,200,66,.3); }
+  .macd-ndiv  { background: rgba(100,120,200,.12);color: #8090d8; border: 1px solid rgba(100,120,200,.3); }
+
+  /* ── 量比示範 ── */
+  .vol-chip {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 4px;
+    margin: 2px;
+  }
+  .vol-super { color: #ff3f5e; border: 1px solid #ff3f5e; background: rgba(255,63,94,.1); animation: gSup 1s infinite; }
+  .vol-alert { color: #f5c842; border: 1px solid #f5c842; background: rgba(245,200,66,.1); animation: gAlt 1.4s infinite; }
+  @keyframes gSup { 0%,100%{box-shadow:0 0 6px #ff3f5e} 50%{box-shadow:none} }
+  @keyframes gAlt { 0%,100%{box-shadow:0 0 6px #f5c842} 50%{box-shadow:none} }
+
+  /* ── 色彩總覽 ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .color-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .color-swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .color-item span { color: var(--dim); }
+
+  /* ── 術語表 ── */
+  .glossary dt {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 16px;
+    margin-top: 14px;
+  }
+  .glossary dd {
+    font-size: 15.5px;
+    color: var(--dim);
+    margin: 3px 0 0 16px;
+    line-height: 1.6;
+  }
+  .glossary dd strong { color: var(--text); }
+
+  /* ── 頁腳 ── */
+  footer {
+    margin-top: 64px;
+    padding: 24px 40px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 14px;
+    color: var(--dim);
+    letter-spacing: .5px;
+  }
+
+  /* ── RWD ── */
+  @media (max-width: 600px) {
+    .hero { padding: 32px 20px 24px; }
+    .hero h1 { font-size: 22px; }
+    .wrap { padding: 0 14px; }
+    .sec-where { display: none; }
+    nav a { padding: 10px 9px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="hero-logo">CashFlow Dashboard</div>
+  <h1>金流黑盒子 <span>//</span> 儀表板說明書</h1>
+  <div class="hero-sub">看懂每個區塊的訊號，跟上市場真正的金流</div>
+</div>
+
+<!-- ── 導覽 ── -->
+<nav id="topnav">
+  <a href="#overview">總覽</a>
+  <a href="#sec-a">A 狀態列</a>
+  <a href="#sec-b">B 個股矩陣</a>
+  <a href="#sec-c">C 族群金流</a>
+  <a href="#sec-d">D 大單排行</a>
+  <a href="#sec-e">E 大盤Tick</a>
+  <a href="#sec-f">F 成值前20</a>
+  <a href="#sec-g">G 小資當沖</a>
+  <a href="#colors">色彩說明</a>
+  <a href="#glossary">名詞解釋</a>
+</nav>
+
+<div class="wrap">
+
+<!-- ── 總覽 ── -->
+<div class="section" id="overview">
+  <div class="sec-header">
+    <div class="sec-id">總覽</div>
+    <div class="sec-title">這個儀表板在看什麼？</div>
+  </div>
+  <div class="card">
+    <p>金流黑盒子即時追蹤台股<strong>成交金額前 200 名</strong>的股票，把法人、大戶的「金流動向」視覺化。畫面上的每一個數字都是真實撮合產生的，不是預測、不是推薦。</p>
+    <p>核心邏輯很簡單：<strong>錢流向哪裡，市場就往哪裡走</strong>。大單方向、族群輪動、個股急動，都是「金流」的具體呈現。</p>
+  </div>
+  <div class="quick-bar">
+    <div class="quick-card">
+      <div class="badge">A 區</div>
+      <p><strong>全市場狀態</strong><br>大盤、期指、MACD、漲跌停家數</p>
+    </div>
+    <div class="quick-card">
+      <div class="badge">B 區</div>
+      <p><strong>個股矩陣</strong><br>各族群排名 + 個股即時動態</p>
+    </div>
+    <div class="quick-card">
+      <div class="badge">C 區</div>
+      <p><strong>族群金流</strong><br>哪個產業正在吸金或失血</p>
+    </div>
+    <div class="quick-card">
+      <div class="badge">D 區</div>
+      <p><strong>大單排行</strong><br>主力/大戶在敲哪幾支</p>
+    </div>
+    <div class="quick-card">
+      <div class="badge">E 區</div>
+      <p><strong>大盤Tick</strong><br>今日逐分鐘成交熱度圓盤</p>
+    </div>
+    <div class="quick-card">
+      <div class="badge">F 區</div>
+      <p><strong>成值前20</strong><br>今日最熱門的20支股票</p>
+    </div>
+    <div class="quick-card">
+      <div class="badge">G 區</div>
+      <p><strong>小資當沖戰場</strong><br>股價≤1000元、買力最強的標的</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── A 區 ── -->
+<div class="section" id="sec-a">
+  <div class="sec-header">
+    <div class="sec-id">A</div>
+    <div class="sec-title">頂部狀態列</div>
+    <div class="sec-where">畫面最上方兩列</div>
+  </div>
+
+  <div class="card">
+    <h4>A-1 — 第一列：大盤核心數據</h4>
+    <div class="signal-row">
+      <span class="sig accent">加權指數</span>
+      <span class="sig-desc">台灣加權股價指數即時點位、漲跌點數、漲跌幅百分比</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">加權5日均</span>
+      <span class="sig-desc">加權指數近5日收盤均值，判斷短線支撐壓力的參考基準</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">MACD 訊號</span>
+      <span class="sig-desc">
+        日線 MACD 狀態，有四種：<br>
+        <span class="macd-chip macd-bull">多方</span> MACD 柱 &gt; 0，多頭格局<br>
+        <span class="macd-chip macd-bear">空方</span> MACD 柱 &lt; 0，空頭格局<br>
+        <span class="macd-chip macd-pdiv">正背離</span> 柱連續5根放大且 &gt; 0，多頭加速<br>
+        <span class="macd-chip macd-ndiv">負背離</span> 柱連續5根縮小且 &lt; 0，空頭加速
+      </span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">台指期 / 升貼水</span>
+      <span class="sig-desc">台指期即時價格；升水（期貨 &gt; 現貨）代表多方積極，貼水代表空方壓力</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig rise">漲停家數</span>
+      <span class="sig-desc">今日漲幅超過 9.9% 的股票數，數字越大代表多頭氣氛越旺</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig fall">跌停家數</span>
+      <span class="sig-desc">今日跌幅超過 9.9% 的股票數，數字越大代表空頭殺盤越猛</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig gold">高價股被拋</span>
+      <span class="sig-desc">近20個報價中高價股（≥200元）出現賣壓的比例，用於感受外資/機構的態度</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>A-2 — 第二列：圖例 + 國際市場</h4>
+    <div class="signal-row">
+      <span class="sig accent">色彩圖例</span>
+      <span class="sig-desc">顯示畫面各種標記的意義，包含漲排、跌排、前3名星號、ϟ急動符號的說明，方便對照</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig warn">撐盤中</span>
+      <span class="sig-desc">五檔委買出現異常集中的大量掛單，代表有主力在該價位大量掛買單「撐住」股價，阻止下跌；是多方護盤的訊號</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig fall">壓盤中</span>
+      <span class="sig-desc">五檔委賣出現異常集中的大量掛單，代表有主力在該價位大量掛賣單「壓制」股價，阻止上漲；是空方壓制的訊號</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">輕原油 / 銅</span>
+      <span class="sig-desc">WTI 原油、銅期貨即時價格 + 近60日均價，用於判斷景氣循環方向（銅被稱為「景氣銅博士」）</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">美金 / 小SP / 小那</span>
+      <span class="sig-desc">美元指數、S&amp;P 500 期貨、Nasdaq 期貨，反映外資情緒與台股連動性</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── B 區 ── -->
+<div class="section" id="sec-b">
+  <div class="sec-header">
+    <div class="sec-id">B</div>
+    <div class="sec-title">族群排名 + 個股矩陣</div>
+    <div class="sec-where">畫面主體中央</div>
+  </div>
+
+  <div class="card">
+    <h4>族群排名列</h4>
+    <p>最上方一列顯示各產業族群的排名（★1 → ★2 → ★3 …），依<strong>族群總成值</strong>由大到小排列。排名越前面代表今日資金集中度越高，是主要戰場。</p>
+    <p>每個欄位標題同時顯示該族群的<strong>加權漲跌幅</strong>（族群內個股漲跌百分比的加權平均），可快速判斷整個族群是在漲還是在跌。</p>
+  </div>
+
+  <div class="card">
+    <h4>個股格子 — 每格包含三層資訊</h4>
+    <div class="signal-row">
+      <span class="sig accent">第一行</span>
+      <span class="sig-desc">股票名稱（控盤中的股票名稱右側會有特殊標記）</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig rise">第二行</span>
+      <span class="sig-desc">即時漲跌幅，紅色=漲，綠色=跌</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">第三行</span>
+      <span class="sig-desc">大單次數 B（買方大單）/ S（賣方大單），反映機構主動打單密度</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>ϟ 急動警示 — 格子右側的閃爍符號</h4>
+    <p>當一支股票在 <strong>60 秒內</strong>價格變動超過 <strong>1.5%</strong>，該格子右側會出現脈動的 ϟ 符號：</p>
+    <div style="margin:12px 0">
+      <div class="surge-demo"><span class="surge-up">ϟ</span> <span style="font-size:15px">聯電 +2.3%</span></div>
+      <span style="font-size:15px; color:var(--dim); margin-left:8px">紅色 ϟ = 急拉，60秒內快速上漲超過 1.5%</span>
+    </div>
+    <div style="margin:12px 0">
+      <div class="surge-demo"><span class="surge-dn">ϟ</span> <span style="font-size:15px">台積電 -1.7%</span></div>
+      <span style="font-size:15px; color:var(--dim); margin-left:8px">綠色 ϟ = 急跌，60秒內快速下跌超過 1.5%</span>
+    </div>
+    <p style="font-size:15px; color:var(--dim)">ϟ 只表示「短時間內價格快速移動」，不代表好壞，需搭配大單方向（D區）和族群金流（C區）判斷意圖。</p>
+  </div>
+</div>
+
+<!-- ── C 區 ── -->
+<div class="section" id="sec-c">
+  <div class="sec-header">
+    <div class="sec-id">C</div>
+    <div class="sec-title">族群金流動向</div>
+    <div class="sec-where">畫面右側直條</div>
+  </div>
+
+  <div class="card">
+    <h4>橫向條狀圖 — 看哪個族群最有錢</h4>
+    <p>顯示今日<strong>成值最大的 12 個產業族群</strong>，依成交金額由上到下排列，越上面代表越多錢在那個族群流動。</p>
+    <p>條狀圖的長度代表成值佔比，最大的那個族群撐滿整列。顏色代表漲跌：<strong style="color:var(--rise)">紅色 = 族群整體在漲</strong>，<strong style="color:var(--fall)">綠色 = 族群整體在跌</strong>。</p>
+  </div>
+
+  <div class="card">
+    <h4>流入 / 流出警示文字</h4>
+    <p>當某族群在短時間內出現明顯的資金移動，條狀圖下半部會出現時間 + 金額的文字提示：</p>
+    <div class="signal-row">
+      <span class="sig rise">▲ 流入</span>
+      <span class="sig-desc">例：<span style="color:#ff3f5e">09:54 ▲ 18.2億</span>，該族群有明顯買方資金湧入</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig fall">▼ 流出</span>
+      <span class="sig-desc">例：<span style="color:#00e5a0">10:21 ▼ 22.1億</span>，該族群有明顯資金撤出</span>
+    </div>
+    <p style="font-size:15px; color:var(--dim); margin-top:8px">警示文字會一直保留到下一次同族群有新的流動事件才更新，重整畫面也不會消失（當日有效）。</p>
+  </div>
+</div>
+
+<!-- ── D 區 ── -->
+<div class="section" id="sec-d">
+  <div class="sec-header">
+    <div class="sec-id">D</div>
+    <div class="sec-title">大單排行榜</div>
+    <div class="sec-where">畫面底部</div>
+  </div>
+
+  <div class="card">
+    <h4>什麼是「大單」？</h4>
+    <p>單筆成交達到 <strong>99 張（或以上）</strong>的交易視為大單。這種規模的交易通常不是一般散戶行為，而是法人、大戶或主力在執行，因此大單方向是判斷主力意圖的重要依據。</p>
+  </div>
+
+  <div class="card">
+    <h4>排名邏輯 — 用「次數」不用「金額」</h4>
+    <p>D 區的排名依<strong>大單出現次數</strong>（連續打單密度）排列，不是依單筆最大金額。</p>
+    <div class="signal-row">
+      <span class="sig accent">次數排名</span>
+      <span class="sig-desc">連續打出多筆大單 → 主力主動掃貨，跟單訊號強</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig warn">金額一次最大</span>
+      <span class="sig-desc">可能是被動湊單（剛好凑到大量委託），跟單意義相對低</span>
+    </div>
+    <p style="font-size:15px; color:var(--dim); margin-top:8px">右側「單位:張」欄位顯示的是<strong>累積大單總張數</strong>，數字越大代表今日買方（或賣方）投入的總量越多。</p>
+  </div>
+
+  <div class="card">
+    <h4>三種燈號 — 判斷主力行為</h4>
+    <div class="signal-row">
+      <span class="sig red-dot"><span class="dot dot-acc"></span>掃貨</span>
+      <span class="sig-desc">只有買方大單，幾乎沒有賣方大單。主力單邊買進，看多意圖明確。</span>
+      <span class="sig-action">留意跟進機會</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig warn"><span class="dot dot-tug"></span>拉鋸</span>
+      <span class="sig-desc">買賣方大單都有，主力與反向力量在互相角力，方向尚未明朗。</span>
+      <span class="sig-action">觀察等方向確認</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig green-dot"><span class="dot dot-dist"></span>出貨</span>
+      <span class="sig-desc">只有賣方大單，主力在出脫持股，小心接到高點籌碼。</span>
+      <span class="sig-action">注意風險</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>新進入排行的標的</h4>
+    <p>剛擠入 Top10 的股票列會閃黃一秒，提醒主力的注意力剛轉移過來。</p>
+  </div>
+</div>
+
+<!-- ── E 區 ── -->
+<div class="section" id="sec-e">
+  <div class="sec-header">
+    <div class="sec-id">E</div>
+    <div class="sec-title">大盤 Tick 儀表板</div>
+    <div class="sec-where">畫面下方中間圓盤</div>
+  </div>
+
+  <div class="card">
+    <h4>圓盤圖 — 今日盤面熱度時序圖</h4>
+    <p>圓盤對應 <strong>09:00 → 13:30</strong> 的完整交易時段，從12點鐘方向順時針行進，每一格代表一分鐘的全市場成交筆數。</p>
+    <div class="signal-row">
+      <span class="sig rise">紅色</span>
+      <span class="sig-desc">該分鐘成交筆數超過今日均值的 <strong>2.5 倍</strong>，市場出現爆量，通常伴隨重大消息或主力動作</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig warn">黃色</span>
+      <span class="sig-desc">超過均值 <strong>1.8 倍</strong>，成交異常活躍，有資金在加速動作</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">藍色</span>
+      <span class="sig-desc">正常範圍，市場正常交投</span>
+    </div>
+    <p style="margin-top:10px; font-size:15.5px">圓盤中央數字：交易時段內顯示<strong>當下這一分鐘的成交筆數</strong>；盤後則顯示今日合計筆數與最活躍的分鐘。</p>
+  </div>
+</div>
+
+<!-- ── F 區 ── -->
+<div class="section" id="sec-f">
+  <div class="sec-header">
+    <div class="sec-id">F</div>
+    <div class="sec-title">成值前 20 名</div>
+    <div class="sec-where">畫面左下方</div>
+  </div>
+
+  <div class="card">
+    <h4>今日最熱門的 20 支股票</h4>
+    <p>依<strong>今日累計成交金額（成值）</strong>排名前 20 的股票。成值越高代表今天有越多錢在這支股票流動，是市場資金最集中的標的。</p>
+    <p>排名第 1/2/3 名分別以<strong style="color:var(--gold)">金</strong>、<strong style="color:var(--silver)">銀</strong>、<strong style="color:var(--copper)">銅</strong>顯示。</p>
+  </div>
+
+  <div class="card">
+    <h4>量比徽章 — 今日成交量是否異常</h4>
+    <p>量比 = 今日同時段成交量 ÷ 近2日同時段平均成交量，反映今日相對熱度：</p>
+    <div class="signal-row">
+      <span class="sig rise"><span class="vol-chip vol-super">5x ⚡</span></span>
+      <span class="sig-desc">量比 ≥ 5 倍，今日同時段成交量是近2日的5倍以上，<strong>極度爆量</strong>，整列閃紅框</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig warn"><span class="vol-chip vol-alert">3x △</span></span>
+      <span class="sig-desc">量比 ≥ 3 倍，成交量明顯異常放大，整列閃金框，值得關注</span>
+    </div>
+    <p style="font-size:15px; color:var(--dim); margin-top:8px">量比爆量不代表一定會漲，只代表「今天比平常熱很多」，原因可能是利多、法說、主力介入或散戶追高，需搭配大單方向（D區）判斷。</p>
+  </div>
+</div>
+
+<!-- ── G 區 ── -->
+<div class="section" id="sec-g">
+  <div class="sec-header">
+    <div class="sec-id">G</div>
+    <div class="sec-title">小資當沖戰場</div>
+    <div class="sec-where">B 區與 F 區之間橫排</div>
+  </div>
+
+  <div class="card">
+    <h4>什麼樣的股票會在這裡？</h4>
+    <p>同時滿足兩個條件才會出現在 G 區：</p>
+    <div class="signal-row">
+      <span class="sig accent">股價條件</span>
+      <span class="sig-desc">現價 ≤ 1,000 元，降低每張資金門檻，適合小資族操作</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig rise">動能條件</span>
+      <span class="sig-desc">買方 tick 數 &gt; 賣方 tick 數，代表當下是買方主導</span>
+    </div>
+    <p style="margin-top:10px; font-size:15.5px">有急動訊號（ϟ）的股票會優先搶進格子，確保動能最強的標的排在最前面。</p>
+  </div>
+
+  <div class="card">
+    <h4>格子格式說明</h4>
+    <p style="font-family: monospace; font-size: 15px; background: var(--bg3); border: 1px solid var(--border); border-radius:6px; padding:10px 14px; margin-bottom:10px; color:#fff">
+      聯電&nbsp; <span style="color:#ff3f5e">+2.3%</span>&nbsp; <span style="color:#7b8cde">⚡99</span>
+    </p>
+    <div class="signal-row">
+      <span class="sig accent">股票名稱</span>
+      <span class="sig-desc">股票簡稱</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig rise">漲跌幅</span>
+      <span class="sig-desc">目前漲跌百分比，紅漲綠跌</span>
+    </div>
+    <div class="signal-row">
+      <span class="sig accent">⚡ 數字</span>
+      <span class="sig-desc">累計 Tick 總次數（買 + 賣），反映這支股票今日的市場活躍度</span>
+    </div>
+    <p style="font-size:15px; color:var(--dim); margin-top:8px">格子的位置固定，股票進入後不會移動，直到失去動能（買力≤賣力）或股價超過1000元才釋出位置。空的格子代表目前符合條件的標的還不夠多。</p>
+  </div>
+</div>
+
+<!-- ── 色彩總覽 ── -->
+<div class="section" id="colors">
+  <div class="sec-header">
+    <div class="sec-id">◈</div>
+    <div class="sec-title">色彩說明</div>
+  </div>
+  <div class="card">
+    <h4>全儀表板通用顏色邏輯</h4>
+    <div class="color-grid">
+      <div class="color-item"><div class="color-swatch" style="background:#ff3f5e"></div><div><div style="color:#ff3f5e; font-weight:700">紅色</div><span>漲 / 買超 / 急拉 / 資金流入</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#00e5a0"></div><div><div style="color:#00e5a0; font-weight:700">綠色</div><span>跌 / 賣超 / 急跌 / 資金流出</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#f5c842; border-radius:50%"></div><div><div style="color:#f5c842; font-weight:700">金色圓點</div><span>排行第 1 名</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#b0b8c8; border-radius:50%"></div><div><div style="color:#b0b8c8; font-weight:700">銀色圓點</div><span>排行第 2 名</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#cd7f32; border-radius:50%"></div><div><div style="color:#cd7f32; font-weight:700">銅色圓點</div><span>排行第 3 名</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#7b8cde"></div><div><div style="color:#7b8cde; font-weight:700">藍紫色</div><span>標題 / 中性資訊</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#F0B840"></div><div><div style="color:#F0B840; font-weight:700">橘黃色</div><span>拉鋸狀態 / 異常量比</span></div></div>
+      <div class="color-item"><div class="color-swatch" style="background:#ff3f5e; animation:gSup 1s infinite"></div><div><div style="color:#ff3f5e; font-weight:700">閃紅框</div><span>F 區量比爆量（≥5x）</span></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>台股顏色習慣提醒</h4>
+    <p>台股與歐美市場<strong>顏色相反</strong>：台股紅色代表「漲」，綠色代表「跌」。本儀表板完全遵循台股慣例，觀看時請留意。</p>
+  </div>
+</div>
+
+<!-- ── 名詞解釋 ── -->
+<div class="section" id="glossary">
+  <div class="sec-header">
+    <div class="sec-id">詞</div>
+    <div class="sec-title">名詞解釋</div>
+  </div>
+  <div class="card">
+    <dl class="glossary">
+      <dt>成值（成交金額）</dt>
+      <dd>今日累計成交的總金額（單位：億元）。成值越高代表市場對這支股票的關注度越高。</dd>
+
+      <dt>量比</dt>
+      <dd>今日<strong>同時段</strong>成交量 ÷ 近2日同時段平均成交量。量比 = 2 代表今天的量是平常的2倍，反映相對熱度，排除早盤量少、尾盤放量的干擾。</dd>
+
+      <dt>大單（≥99張）</dt>
+      <dd>單筆成交 99 張以上的交易。一張台股通常是 1,000 股，99 張約 10 萬股，需要相對大的資金規模，一般認為出自法人或大戶。</dd>
+
+      <dt>Tick</dt>
+      <dd>每一筆撮合成功的交易記錄，稱為一個 Tick。Tick 數越多代表交投越活絡，買賣方越積極。</dd>
+
+      <dt>買方 Tick（trb）/ 賣方 Tick（trs）</dt>
+      <dd>依 uptick/downtick 規則判斷的主動買入次數與主動賣出次數。<strong>trb &gt; trs</strong> 代表買方主導，是做多的基本條件。</dd>
+
+      <dt>升貼水</dt>
+      <dd>台指期貨價格 − 加權指數現貨點位。正值（升水）代表期貨市場看多，負值（貼水）代表期貨市場看空。</dd>
+
+      <dt>族群輪動</dt>
+      <dd>資金從某一產業族群（如半導體）轉移至另一族群（如金融），造成族群排名的動態變化。跟上輪動方向是當沖/短線的重要技巧。</dd>
+
+      <dt>掃貨 / 拉鋸 / 出貨</dt>
+      <dd>根據大單方向判斷的主力行為：<strong>掃貨</strong>（持續買進）、<strong>拉鋸</strong>（買賣方角力中）、<strong>出貨</strong>（持續賣出）。</dd>
+
+      <dt>撐盤 / 壓盤</dt>
+      <dd><strong>撐盤</strong>：五檔委買中出現異常大量的集中掛單，主力在某個價位掛出大量買單「撐住」股價，防止進一步下跌，屬於多方護盤行為。<strong>壓盤</strong>：五檔委賣中出現異常大量的集中掛單，主力在某個價位掛出大量賣單「壓制」股價，阻止繼續上漲，屬於空方壓力行為。儀表板會自動偵測委買/委賣的異常集中程度，並在個股格子上標示「撐盤中」或「壓盤中」。</dd>
+    </dl>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<footer>
+  金流黑盒子儀表板說明書 &nbsp;|&nbsp; 資料來源：富邦 Neo SDK、yfinance &nbsp;|&nbsp; 本儀表板僅供資訊參考，不構成任何投資建議
+</footer>
+
+<script>
+  // 導覽列 active 追蹤
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
