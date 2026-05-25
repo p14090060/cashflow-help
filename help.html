@@ -455,11 +455,11 @@
     </div>
     <div class="signal-row">
       <span class="sig warn">撐盤中</span>
-      <span class="sig-desc">五檔委買出現異常集中的大量掛單，代表有主力在該價位大量掛買單「撐住」股價，阻止下跌；是多方護盤的訊號</span>
+      <span class="sig-desc">同一價位連續 5 筆以上的主動買入成交，判斷有人積極接單撐住股價；格子旁出現金黃閃爍圓點</span>
     </div>
     <div class="signal-row">
       <span class="sig fall">壓盤中</span>
-      <span class="sig-desc">五檔委賣出現異常集中的大量掛單，代表有主力在該價位大量掛賣單「壓制」股價，阻止上漲；是空方壓制的訊號</span>
+      <span class="sig-desc">同一價位連續 5 筆以上的主動賣出成交，判斷有人持續出貨壓制股價；格子旁出現綠色閃爍圓點</span>
     </div>
     <div class="signal-row">
       <span class="sig accent">輕原油 / 銅</span>
@@ -760,7 +760,7 @@
       <dd>根據大單方向判斷的主力行為：<strong>掃貨</strong>（持續買進）、<strong>拉鋸</strong>（買賣方角力中）、<strong>出貨</strong>（持續賣出）。</dd>
 
       <dt>撐盤 / 壓盤</dt>
-      <dd><strong>撐盤</strong>：五檔委買中出現異常大量的集中掛單，主力在某個價位掛出大量買單「撐住」股價，防止進一步下跌，屬於多方護盤行為。<br><br><strong>壓盤</strong>：五檔委賣中出現異常大量的集中掛單，主力在某個價位掛出大量賣單「壓制」股價，阻止繼續上漲，屬於空方壓力行為。儀表板會自動偵測委買/委賣的異常集中程度，並在個股格子上標示「撐盤中」或「壓盤中」。</dd>
+      <dd><strong>撐盤</strong>：同一價位連續出現 5 筆以上的主動買入成交（現價 ≥ 委買最高價），判斷有人在該價格積極接單買進、試圖撐住股價，屬於多方護盤訊號。<br><br><strong>壓盤</strong>：同一價位連續出現 5 筆以上的主動賣出成交（現價 &lt; 委買最高價），判斷有人在該價格持續出貨、壓制股價上漲，屬於空方壓力訊號。偵測基準是逐筆成交 tick，連續達門檻時格子出現閃爍圓點。</dd>
     </dl>
   </div>
 </div>
